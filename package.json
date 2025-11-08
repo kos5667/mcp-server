@@ -21,6 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.1",
     "@nestjs/cli": "^11.0.10"
   }
 }
