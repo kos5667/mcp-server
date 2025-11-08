@@ -1,19 +1,53 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
+    /* Language and Environment */
+    "target": "ES2022",                 // 컴파일 결과 JS 버전 (Node 18+ 정도 타깃이면 적절)
+    "lib": ["ES2022"],                  // 사용할 표준 라이브러리 타입 (DOM 필요 없으면 ES2022만으로 OK)
+    "module": "NodeNext",               // Node ESM 스타일 모듈 시스템 사용
+    "moduleResolution": "NodeNext",     // import 해석 방식도 NodeNext 규칙으로
+
+    /* Emit */
+    "outDir": "./dist",                 // 컴파일된 JS, d.ts 출력 디렉터리
+    "rootDir": "./src",                 // 소스 루트 디렉터리
+    "sourceMap": true,                  // .js.map 소스맵 생성
+    "declaration": true,                // .d.ts 타입 선언 파일 생성
+    "declarationMap": true,             // .d.ts용 소스맵 생성 (디버깅에 유용)
+    "removeComments": false,            // 출력 파일에서 주석 제거하지 않음
+
+    /* Interop Constraints */
+    "esModuleInterop": true,            // CJS(require) 모듈을 default import처럼 사용 가능
+    "forceConsistentCasingInFileNames": true, // 파일명 대소문자 불일치 시 에러 (리눅스에서 특히 중요)
+    "isolatedModules": true,            // 각 파일을 독립 모듈로 취급 (ts-node, SWC, esbuild 등과 호환성 ↑)
+
+    /* Type Checking */
+    "strict": true,                     // strict 계열 옵션 전체 활성화 (아래 몇 개와 동작 중복)
+    "noUnusedLocals": true,             // 사용하지 않는 지역 변수 있으면 에러
+    "noUnusedParameters": true,         // 사용하지 않는 파라미터 있으면 에러
+    "noImplicitReturns": true,          // 모든 코드 경로에서 return하지 않으면 에러
+    "noFallthroughCasesInSwitch": true, // switch case fallthrough 금지 (명시적인 break 요구)
+    "noUncheckedIndexedAccess": true,   // obj[key] 결과에 자동으로 | undefined 붙여서 더 안전하게
+    "noImplicitOverride": true,         // override 시 반드시 override 키워드 사용하도록 강제
+
+    /* Completeness */
+    "skipLibCheck": true,               // node_modules 등 라이브러리 d.ts는 타입체크 스킵 (빌드 속도 ↑)
+
+    /* Experimental */
+    "experimentalDecorators": true,     // 데코레이터 문법 사용 허용 (실험적)
+    "emitDecoratorMetadata": true,      // 데코레이터용 메타데이터 내보내기 (NestJS, class-validator 등에서 사용)
+
+    /* Advanced */
+    "resolveJsonModule": true           // JSON 파일을 import 해서 타입 포함하도록 허용
+  },
+  "include": [
+    "src/**/*"                          // 컴파일 대상 소스 경로
+  ],
+  "exclude": [
+    "node_modules",                     // 외부 라이브러리 제외
+    "dist",                             // 빌드 결과물 제외
+    "**/*.test.ts",                     // 테스트 파일 제외
+    "**/*.spec.ts"
+  ],
+  "ts-node": {
+    "esm": true                         // ts-node 실행 시 ESM 모드로 동작
   }
 }
