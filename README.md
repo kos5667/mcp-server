@@ -13,57 +13,145 @@ cluade, chatgpt 연동.
 ```text
 mcp-server/
 ├── src/
-│   ├── main.ts                      # 애플리케이션 진입점
-│   ├── app.module.ts                # 루트 모듈
-│   ├── mcp/
-│   │   ├── mcp.module.ts            # MCP 모듈
-│   │   ├── mcp.service.ts           # MCP 서버 관리
-│   │   └── interfaces/
-│   │       └── mcp-server.interface.ts
-│   ├── tools/
-│   │   ├── tools.module.ts          # Tools 모듈
-│   │   ├── tools.service.ts         # Tools 관리
-│   │   ├── handlers/
-│   │   │   ├── calculator.handler.ts
-│   │   │   ├── file.handler.ts
-│   │   │   └── search.handler.ts
-│   │   └── decorators/
-│   │       └── tool.decorator.ts    # 커스텀 데코레이터
-│   ├── resources/
-│   │   ├── resources.module.ts      # Resources 모듈
-│   │   ├── resources.service.ts     # Resources 관리
-│   │   ├── handlers/
-│   │   │   ├── file-resource.handler.ts
-│   │   │   └── database-resource.handler.ts
-│   │   └── decorators/
-│   │       └── resource.decorator.ts
-│   ├── prompts/
-│   │   ├── prompts.module.ts        # Prompts 모듈
-│   │   ├── prompts.service.ts       # Prompts 관리
-│   │   ├── templates/
-│   │   │   ├── code-review.template.ts
-│   │   │   └── data-analysis.template.ts
-│   │   └── decorators/
-│   │       └── prompt.decorator.ts
-│   ├── database/
-│   │   ├── database.module.ts       # 데이터베이스 모듈
-│   │   └── database.service.ts
-│   ├── config/
-│   │   ├── configuration.ts         # 설정 파일
-│   │   └── validation.schema.ts     # 환경변수 검증
-│   └── common/
-│       ├── filters/
-│       │   └── mcp-exception.filter.ts
-│       ├── interceptors/
-│       │   └── logging.interceptor.ts
-│       └── utils/
-│           └── logger.util.ts
-├── test/
-│   ├── app.e2e-spec.ts
-│   └── tools/
-├── jest.config.cjs
-├── nest-cli.json
-├── tsconfig.json
+│   ├── main.ts                          # 애플리케이션 부트스트랩
+│   ├── app.module.ts                    # 루트 모듈
+│   │
+│   ├── common/                          # 공통 유틸리티
+│   │   ├── decorators/                  # 커스텀 데코레이터
+│   │   │   ├── mcp-provider.decorator.ts
+│   │   │   ├── mcp-tool.decorator.ts
+│   │   │   ├── mcp-resource.decorator.ts
+│   │   │   └── mcp-prompt.decorator.ts
+│   │   ├── interfaces/                  # 공통 인터페이스
+│   │   │   ├── tool.interface.ts
+│   │   │   ├── resource.interface.ts
+│   │   │   └── prompt.interface.ts
+│   │   ├── guards/                      # Guards
+│   │   │   ├── rate-limit.guard.ts
+│   │   │   └── auth.guard.ts
+│   │   ├── interceptors/                # Interceptors
+│   │   │   ├── logging.interceptor.ts
+│   │   │   └── cache.interceptor.ts
+│   │   ├── filters/                     # Exception Filters
+│   │   │   └── provider.exception.filter.ts
+│   │   └── pipes/                       # Validation Pipes
+│   │       └── tool-validation.pipe.ts
+│   │
+│   ├── config/                          # 설정 모듈
+│   │   ├── config.module.ts
+│   │   ├── configuration.ts             # 설정 팩토리
+│   │   └── validation.schema.ts         # 환경 변수 검증
+│   │
+│   ├── mcp/                             # MCP 코어 모듈
+│   │   ├── mcp.module.ts
+│   │   ├── mcp.service.ts              # MCP 서버 코어 로직
+│   │   ├── mcp.controller.ts           # stdio 통신 핸들러
+│   │   ├── registries/                 # Registry 서비스
+│   │   │   ├── tool.registry.ts       # Tool 등록/조회
+│   │   │   ├── resource.registry.ts   # Resource 등록/조회
+│   │   │   └── prompt.registry.ts     # Prompt 등록/조회
+│   │   ├── handlers/                   # MCP 요청 핸들러
+│   │   │   ├── tools.handler.ts       # tools/call, tools/list
+│   │   │   ├── resources.handler.ts   # resources/read, resources/list
+│   │   │   └── prompts.handler.ts     # prompts/get, prompts/list
+│   │   └── dto/
+│   │       ├── call-tool.dto.ts
+│   │       ├── list-resources.dto.ts
+│   │       └── get-prompt.dto.ts
+│   │
+│   ├── providers/                       # 프로바이더 모듈들
+│   │   │
+│   │   ├── google/                      # 공통 Google 인증/API
+│   │   │   ├── google.module.ts
+│   │   │   ├── google-auth.service.ts  # OAuth 2.0
+│   │   │   ├── google-api.service.ts   # 공통 API 클라이언트
+│   │   │   └── config/
+│   │   │       └── google.config.ts
+│   │   │
+│   │   ├── google-sheets/              # Google Sheets 모듈
+│   │   │   ├── google-sheets.module.ts
+│   │   │   ├── google-sheets.service.ts
+│   │   │   ├── google-sheets.config.ts
+│   │   │   ├── tools/                  # MCP Tools 정의
+│   │   │   │   ├── read-range.tool.ts
+│   │   │   │   ├── write-range.tool.ts
+│   │   │   │   └── list-sheets.tool.ts
+│   │   │   ├── resources/              # MCP Resources
+│   │   │   │   └── spreadsheet.resource.ts
+│   │   │   └── dto/
+│   │   │       ├── read-range.dto.ts
+│   │   │       └── write-range.dto.ts
+│   │   │
+│   │   ├── google-calendar/            # Google Calendar 모듈
+│   │   │   ├── google-calendar.module.ts
+│   │   │   ├── google-calendar.service.ts
+│   │   │   ├── google-calendar.config.ts
+│   │   │   ├── tools/
+│   │   │   │   ├── create-event.tool.ts
+│   │   │   │   ├── list-events.tool.ts
+│   │   │   │   └── update-event.tool.ts
+│   │   │   └── dto/
+│   │   │       ├── create-event.dto.ts
+│   │   │       └── list-events.dto.ts
+│   │   │
+│   │   ├── notion/                      # Notion 모듈 (향후)
+│   │   │   ├── notion.module.ts
+│   │   │   ├── notion.service.ts
+│   │   │   ├── tools/
+│   │   │   └── dto/
+│   │   │
+│   │   └── canva/                       # Canva 모듈 (향후)
+│   │       ├── canva.module.ts
+│   │       ├── canva.service.ts
+│   │       ├── tools/
+│   │       └── dto/
+│   │
+│   ├── auth/                            # 인증 모듈
+│   │   ├── auth.module.ts
+│   │   ├── auth.service.ts
+│   │   ├── strategies/
+│   │   │   ├── oauth.strategy.ts
+│   │   │   └── api-key.strategy.ts
+│   │   └── token-store.service.ts
+│   │
+│   ├── cache/                           # 캐시 모듈
+│   │   ├── cache.module.ts
+│   │   ├── cache.service.ts
+│   │   └── cache.config.ts
+│   │
+│   └── logging/                         # 로깅 모듈
+│       ├── logging.module.ts
+│       ├── logging.service.ts
+│       └── logging.config.ts
+│
+├── test/                                # 테스트
+│   ├── unit/                            # 단위 테스트
+│   │   ├── providers/
+│   │   │   ├── google-sheets/
+│   │   │   │   ├── google-sheets.service.spec.ts
+│   │   │   │   └── tools/
+│   │   │   │       └── read-range.tool.spec.ts
+│   │   │   └── google-calendar/
+│   │   ├── mcp/
+│   │   │   └── tool.registry.spec.ts
+│   │   └── auth/
+│   ├── integration/                     # 통합 테스트
+│   │   ├── google-sheets.integration.spec.ts
+│   │   └── google-calendar.integration.spec.ts
+│   └── e2e/                             # E2E 테스트
+│       ├── mcp-protocol.e2e-spec.ts
+│       └── google-sheets.e2e-spec.ts
+│
+├── scripts/                             # 유틸리티 스크립트
+│   ├── setup-google-oauth.ts            # OAuth 설정 도구
+│   └── test-mcp-stdio.ts                # MCP 연결 테스트
+│
 ├── package.json
-└── .env
+├── tsconfig.json
+├── nest-cli.json
+├── jest.config.cjs
+├── .env.example
+├── .env
+├── Dockerfile
+└── docker-compose.yml
 ```
