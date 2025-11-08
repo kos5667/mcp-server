@@ -10,7 +10,7 @@
     "mcp-server": "./dist/main.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "nest build",
     "start": "node build/index.js",
     "dev": "tsx watch src/index.ts",
     "test": "node --test"
