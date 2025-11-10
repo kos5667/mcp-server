@@ -1,6 +1,43 @@
-# IDE
-/.idea/
+# Dependencies
+node_modules/
 
-# ai
-/.claude/
-/dist/
+# Build output
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# AI
+.claude/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Tokens and credentials
+.tokens/
+*.tokens
+credentials.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temp files
+*.tmp
+.cache/
